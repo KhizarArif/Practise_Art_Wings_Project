@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Mail;
+use Inertia\Inertia;
 
 class FrontendServices
 {
@@ -28,18 +29,19 @@ class FrontendServices
         $products = Product::with('productImages', 'category')
             ->where('status', 'active')
             ->orderBy('id', 'desc')->get();
-        $contentCart = Cart::content();
-        return view('frontend.welcome', compact('products', 'contentCart'));
+        // $contentCart = Cart::content();
+        // return view('frontend.welcome', compact('products', 'contentCart'));
+        return Inertia::render('Frontend/Home', compact('products'));
     }
 
-    public function cart()
-    {
-        $contentCart = Cart::content();
-        $subtotal = Cart::subtotal();
-        $total = Cart::total();
+    // public function cart()
+    // {
+    //     $contentCart = Cart::content();
+    //     $subtotal = Cart::subtotal();
+    //     $total = Cart::total();
 
-        return view('frontend.allShoppingCart', compact('contentCart', 'subtotal', 'total'));
-    }
+    //     return view('frontend.allShoppingCart', compact('contentCart', 'subtotal', 'total'));
+    // }
 
     // public function subProducts($subcategorySlug)
     // {
@@ -60,259 +62,259 @@ class FrontendServices
     //     return view('frontend.allProducts', compact('products', 'subcategorySelected'));
     // }
 
-    public function productDetails($request, $productSlug)
-    {
-        $productSelected = "";
+    // public function productDetails($request, $productSlug)
+    // {
+    //     $productSelected = "";
 
-        $products = collect();
+    //     $products = collect();
 
-        if (!empty($productSlug)) {
-            $productsQuery = Product::with('productImages')->where('status', "active");
+    //     if (!empty($productSlug)) {
+    //         $productsQuery = Product::with('productImages')->where('status', "active");
 
-            if (!empty($productSlug)) {
-                $product = Product::where('slug', $productSlug)->first();
-                if ($product) {
-                    $productsQuery->where('id', $product->id);
-                    $productSelected = $product->id;
-                }
-            }
+    //         if (!empty($productSlug)) {
+    //             $product = Product::where('slug', $productSlug)->first();
+    //             if ($product) {
+    //                 $productsQuery->where('id', $product->id);
+    //                 $productSelected = $product->id;
+    //             }
+    //         }
 
-            $products = $productsQuery->paginate(6);
-        }
+    //         $products = $productsQuery->paginate(6);
+    //     }
 
-        return view('frontend.addToCart', compact('products', 'productSelected'));
-    }
+    //     return view('frontend.addToCart', compact('products', 'productSelected'));
+    // }
 
-    public function addToCart($request)
-    {
-        $product = Product::with('productImages')->find($request->id);
-        $qty = $request->input('quantity', 1);
+    // public function addToCart($request)
+    // {
+    //     $product = Product::with('productImages')->find($request->id);
+    //     $qty = $request->input('quantity', 1);
 
-        if (empty($product)) {
-            return response()->json([
-                "status" => false,
-                "message" => "Product Not Found"
-            ], 422);
-        }
+    //     if (empty($product)) {
+    //         return response()->json([
+    //             "status" => false,
+    //             "message" => "Product Not Found"
+    //         ], 422);
+    //     }
 
-        $productImage = null;
-        if (!empty($request->image_id)) {
-            $productImage = $product->productImages->where('id', $request->image_id)->first();
-        }
+    //     $productImage = null;
+    //     if (!empty($request->image_id)) {
+    //         $productImage = $product->productImages->where('id', $request->image_id)->first();
+    //     }
 
-        if (Cart::count() > 0) {
-            $contentCart = Cart::content();
-            $productAlreadyExists = false;
+    //     if (Cart::count() > 0) {
+    //         $contentCart = Cart::content();
+    //         $productAlreadyExists = false;
 
-            foreach ($contentCart as $item) {
-                if ($item->id == $product->id) {
-                    $productAlreadyExists = true;
-                }
-            }
+    //         foreach ($contentCart as $item) {
+    //             if ($item->id == $product->id) {
+    //                 $productAlreadyExists = true;
+    //             }
+    //         }
 
-            if ($productAlreadyExists == false) {
-                if (!empty($productImage)) {
-                    Cart::add($product->id, $product->title, $qty, $product->price, ["productImage" => $productImage]);
-                } else {
-                    Cart::add($product->id, $product->title, $qty, $product->price);
-                }
-                $status = true;
-                $message = $product->title . ' added to Cart';
-            } else {
-                $status = false;
-                $message = $product->title . ' already added to Cart';
-            }
-        } else {
-            if (!empty($productImage)) {
-                Cart::add($product->id, $product->title, $qty, $product->price, ["productImage" => $productImage]);
-            } else {
-                Cart::add($product->id, $product->title, $qty, $product->price);
-            }
-            $status = true;
-            $message = $product->title . ' added to Cart';
-        }
+    //         if ($productAlreadyExists == false) {
+    //             if (!empty($productImage)) {
+    //                 Cart::add($product->id, $product->title, $qty, $product->price, ["productImage" => $productImage]);
+    //             } else {
+    //                 Cart::add($product->id, $product->title, $qty, $product->price);
+    //             }
+    //             $status = true;
+    //             $message = $product->title . ' added to Cart';
+    //         } else {
+    //             $status = false;
+    //             $message = $product->title . ' already added to Cart';
+    //         }
+    //     } else {
+    //         if (!empty($productImage)) {
+    //             Cart::add($product->id, $product->title, $qty, $product->price, ["productImage" => $productImage]);
+    //         } else {
+    //             Cart::add($product->id, $product->title, $qty, $product->price);
+    //         }
+    //         $status = true;
+    //         $message = $product->title . ' added to Cart';
+    //     }
 
-        return response()->json([
-            "status" => $status,
-            "message" => $message
-        ]);
-    }
+    //     return response()->json([
+    //         "status" => $status,
+    //         "message" => $message
+    //     ]);
+    // }
 
-    public function deleteToCart($request)
-    {
-        $rowId = $request->rowId;
-        $cartInfo = Cart::get($rowId);
+    // public function deleteToCart($request)
+    // {
+    //     $rowId = $request->rowId;
+    //     $cartInfo = Cart::get($rowId);
 
-        if ($cartInfo == null) {
-            $status = false;
-            $message = "Product Not Found";
-            return response()->json([
-                "status" => $status,
-                "message" => $message
-            ]);
-        }
+    //     if ($cartInfo == null) {
+    //         $status = false;
+    //         $message = "Product Not Found";
+    //         return response()->json([
+    //             "status" => $status,
+    //             "message" => $message
+    //         ]);
+    //     }
 
-        Cart::remove($rowId);
-        $status = true;
-        $message = "Product Deleted Successfully!.";
-        return response()->json([
-            "status" => $status,
-            "message" => $message
-        ]);
-    }
+    //     Cart::remove($rowId);
+    //     $status = true;
+    //     $message = "Product Deleted Successfully!.";
+    //     return response()->json([
+    //         "status" => $status,
+    //         "message" => $message
+    //     ]);
+    // }
 
-    public function updateCart(Request $request)
-    {
-        $rowId = $request->rowId;
-        $qty = $request->qty;
+    // public function updateCart(Request $request)
+    // {
+    //     $rowId = $request->rowId;
+    //     $qty = $request->qty;
 
-        $cartInfo = Cart::get($rowId);
-        $product = Product::find($cartInfo->id);
-
-
-        if ($qty <= $product->qty) {
-            Cart::update($rowId, $qty);
-            $status = true;
-            $message = "Cart Updated Successfully!.";
-        } else {
-            $status = false;
-            $message = "Request qty ($qty) Out of Stock";
-        }
-
-        // Session::flash('success',$message);
-
-        return response()->json([
-            "status" => $status,
-            "message" => $message
-        ]);
-    }
-
-    public function checkouts()
-    {
-        $checkoutContent = Cart::content();
-        $allCities = City::all();
-        return view('frontend.checkout', compact('checkoutContent', 'allCities'));
-    }
-
-    public function getShippingAmount(Request $request)
-    {
-        $subTotal = Cart::subtotal(2, '.', '');
-        if ($request->city_id > 0) {
-            $shippingInfo = ShippingCharge::where('city_id', $request->city_id)->first();
-            $grandTotal = 0;
-
-            if ($shippingInfo != null) {
-                $totalShippingCharges = $shippingInfo->amount;
-                $grandTotal = $subTotal + $totalShippingCharges;
-
-                return response()->json([
-                    "status" => true,
-                    "totalShippingCharges" => $totalShippingCharges,
-                    "subTotal" => $subTotal,
-                    "grandTotal" => $grandTotal
-                ]);
-            } else {
-                $shippingInfo = ShippingCharge::where('city_id', 9999)->first();
-                $totalShippingCharges = $shippingInfo->amount;
-                $grandTotal = $subTotal + $totalShippingCharges;
-
-                return response()->json([
-                    "status" => true,
-                    "totalShippingCharges" => $totalShippingCharges,
-                    "subTotal" => $subTotal,
-                    "grandTotal" => $grandTotal
-                ]);
-            }
-        } else {
-
-            return response()->json([
-                "status" => true,
-                "totalShippingCharges" => 0,
-                "subTotal" => $subTotal,
-                "grandTotal" => $subTotal
-            ]);
-        }
-    }
-
-    public function processCheckout($request)
-    {
-
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|min:5',
-            'last_name' => 'required',
-            'email' => 'required|email',
-            'phone' => 'required',
-            'city' => 'required',
-            'address' => 'required',
-
-        ]);
+    //     $cartInfo = Cart::get($rowId);
+    //     $product = Product::find($cartInfo->id);
 
 
-        if ($validator->fails()) {
-            return response()->json([
-                'status' => false,
-                'error' => $validator->errors()
-            ]);
-        }
+    //     if ($qty <= $product->qty) {
+    //         Cart::update($rowId, $qty);
+    //         $status = true;
+    //         $message = "Cart Updated Successfully!.";
+    //     } else {
+    //         $status = false;
+    //         $message = "Request qty ($qty) Out of Stock";
+    //     }
+
+    //     // Session::flash('success',$message);
+
+    //     return response()->json([
+    //         "status" => $status,
+    //         "message" => $message
+    //     ]);
+    // }
+
+    // public function checkouts()
+    // {
+    //     $checkoutContent = Cart::content();
+    //     $allCities = City::all();
+    //     return view('frontend.checkout', compact('checkoutContent', 'allCities'));
+    // }
+
+    // public function getShippingAmount(Request $request)
+    // {
+    //     $subTotal = Cart::subtotal(2, '.', '');
+    //     if ($request->city_id > 0) {
+    //         $shippingInfo = ShippingCharge::where('city_id', $request->city_id)->first();
+    //         $grandTotal = 0;
+
+    //         if ($shippingInfo != null) {
+    //             $totalShippingCharges = $shippingInfo->amount;
+    //             $grandTotal = $subTotal + $totalShippingCharges;
+
+    //             return response()->json([
+    //                 "status" => true,
+    //                 "totalShippingCharges" => $totalShippingCharges,
+    //                 "subTotal" => $subTotal,
+    //                 "grandTotal" => $grandTotal
+    //             ]);
+    //         } else {
+    //             $shippingInfo = ShippingCharge::where('city_id', 9999)->first();
+    //             $totalShippingCharges = $shippingInfo->amount;
+    //             $grandTotal = $subTotal + $totalShippingCharges;
+
+    //             return response()->json([
+    //                 "status" => true,
+    //                 "totalShippingCharges" => $totalShippingCharges,
+    //                 "subTotal" => $subTotal,
+    //                 "grandTotal" => $grandTotal
+    //             ]);
+    //         }
+    //     } else {
+
+    //         return response()->json([
+    //             "status" => true,
+    //             "totalShippingCharges" => 0,
+    //             "subTotal" => $subTotal,
+    //             "grandTotal" => $subTotal
+    //         ]);
+    //     }
+    // }
+
+    // public function processCheckout($request)
+    // {
+
+    //     $validator = Validator::make($request->all(), [
+    //         'first_name' => 'required|min:5',
+    //         'last_name' => 'required',
+    //         'email' => 'required|email',
+    //         'phone' => 'required',
+    //         'city' => 'required',
+    //         'address' => 'required',
+
+    //     ]);
 
 
-        $order = new Order();
-        $order->email = $request->email;
-        $order->first_name = $request->first_name;
-        $order->last_name = $request->last_name;
-        $order->address = $request->address;
-        $order->city = $request->city;
-        $order->phone = $request->phone;
-        $order->shipping = $request->shippingCharge_input;
-        $order->subtotal = $request->subtotal_input;
-        $order->grand_total = $request->grandTotal_input;
-        $order->save();
-
-        foreach (Cart::content() as $item) {
-            $orderItem = new OrderItem();
-            $orderItem->order_id = $order->id;
-            $orderItem->product_id = $item->id;
-            $orderItem->name = $item->name;
-            $orderItem->price = $item->price;
-            $orderItem->qty = $item->qty;
-            $orderItem->total = $item->price * $item->qty;
-
-            $productData = Product::with('productImages')->find($item->id);
-
-            if ($productData && $productData->productImages->isNotEmpty()) {
-                $orderItem->product_image_id = $productData->productImages[0]->id;
-            } else {
-                $orderItem->product_image_id = null;
-            }
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'status' => false,
+    //             'error' => $validator->errors()
+    //         ]);
+    //     }
 
 
-            // Update product quantity
-            $productData->save();
+    //     $order = new Order();
+    //     $order->email = $request->email;
+    //     $order->first_name = $request->first_name;
+    //     $order->last_name = $request->last_name;
+    //     $order->address = $request->address;
+    //     $order->city = $request->city;
+    //     $order->phone = $request->phone;
+    //     $order->shipping = $request->shippingCharge_input;
+    //     $order->subtotal = $request->subtotal_input;
+    //     $order->grand_total = $request->grandTotal_input;
+    //     $order->save();
 
-            $orderItem->save();
-        }
+    //     foreach (Cart::content() as $item) {
+    //         $orderItem = new OrderItem();
+    //         $orderItem->order_id = $order->id;
+    //         $orderItem->product_id = $item->id;
+    //         $orderItem->name = $item->name;
+    //         $orderItem->price = $item->price;
+    //         $orderItem->qty = $item->qty;
+    //         $orderItem->total = $item->price * $item->qty;
 
-        Cart::destroy();
+    //         $productData = Product::with('productImages')->find($item->id);
 
-        return response()->json([
-            'message' => 'Order Created Successfully',
-            'orderId' => $order->id,
-            'status' => true,
-        ]);
-    }
+    //         if ($productData && $productData->productImages->isNotEmpty()) {
+    //             $orderItem->product_image_id = $productData->productImages[0]->id;
+    //         } else {
+    //             $orderItem->product_image_id = null;
+    //         }
 
-    public function thankyou($request)
-    {
-        $id = (int) $request->id;
-        $order = Order::where('id', $id)->with('orderItems')->first();
-        if (!$order) {
-            abort(404, 'Order not found.');
-        }
-        Mail::to($order->email)->queue(new OrderCompletedMail($order));
-        Mail::to(config('mail.admin_address'))->queue(new OrderCompletedMail($order, $userType="admin"));
 
-        return view('frontend.thankyou', compact('order'));
-    }
+    //         // Update product quantity
+    //         $productData->save();
+
+    //         $orderItem->save();
+    //     }
+
+    //     Cart::destroy();
+
+    //     return response()->json([
+    //         'message' => 'Order Created Successfully',
+    //         'orderId' => $order->id,
+    //         'status' => true,
+    //     ]);
+    // }
+
+    // public function thankyou($request)
+    // {
+    //     $id = (int) $request->id;
+    //     $order = Order::where('id', $id)->with('orderItems')->first();
+    //     if (!$order) {
+    //         abort(404, 'Order not found.');
+    //     }
+    //     Mail::to($order->email)->queue(new OrderCompletedMail($order));
+    //     Mail::to(config('mail.admin_address'))->queue(new OrderCompletedMail($order, $userType="admin"));
+
+    //     return view('frontend.thankyou', compact('order'));
+    // }
 
 
 }
