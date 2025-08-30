@@ -5,7 +5,6 @@ import HeroSwiper from "../components/HeroSwiper";
 import NewArrivals from "../components/NewArrivals";
 import Banners from "../components/Banners";
 import Services from "../components/Services";
-import Testimonials from "../components/Testimonials";
 
 const Home = () => {
     return (
@@ -18,7 +17,6 @@ const Home = () => {
             <NewArrivals />
             <Banners />
             <Services />
-            <Testimonials />
         </FrontendLayout>
     );
 };
