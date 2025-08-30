@@ -5,19 +5,22 @@ namespace App\Http\Services;
 use App\Models\Category;
 use App\Models\Review;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class CategoryServices
 {
     public function index()
     {
         $categories = Category::orderBy('id', 'desc')->get();
-        return view('admin.category.index', compact('categories'));
+        // return view('admin.category.index', compact('categories'));
+        return Inertia::render("Admin/Category/Index", compact('categories'));
     }
 
     public function create()
     {
-        $categories = Category::orderBy('id', 'desc')->get();
-        return view('admin.category.create', compact('categories'));
+        // $categories = Category::orderBy('id', 'desc')->get();
+        // return view('admin.category.create', compact('categories'));
+        return Inertia::render("Admin/Category/Create");
     }
 
     public function store($request)
@@ -31,7 +34,11 @@ class CategoryServices
         if ($validator->fails()) {
             $message = $validator->errors();
 
-            return response()->json(['error' => $message]);
+            // return response()->json(['error' => $message]);
+            return redirect()->back()->withErrors([
+                'success' => false,
+                'message' => $message
+            ]);
         }
 
         if (empty($request->id)) {
@@ -40,7 +47,11 @@ class CategoryServices
             if ($categoryExists) {
                 $message = 'Category with this name already exists.';
 
-                return response()->json(['error' => $message]);
+                // return response()->json(['error' => $message]);
+                return redirect()->back()->withErrors([
+                    'success' => false,
+                    'message' => $message
+                ]);
             }
         }
 
@@ -53,7 +64,11 @@ class CategoryServices
             $category->showHome = $request->show_on_home;
             $category->save();
             $message = $request->id ? 'Category Update successfully' : 'Category created successfully.';
-            return response()->json(['status' => true, 'message' => $message]);
+            // return response()->json(['status' => true, 'message' => $message]);
+            return redirect()->route('categories.index')->with([
+                'success' => true,
+                'message' => $message
+            ]);
         }
     }
 

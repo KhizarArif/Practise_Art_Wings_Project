@@ -78,7 +78,7 @@ Route::group(["prefix" => "dashboard"], function () {
 
 
     // Authentication and Authorization Middleware for Admin Start
-    Route::middleware(['middleware' => 'auth_admin'])->group(function () {
+    // Route::middleware(['middleware' => 'auth_admin'])->group(function () {
         Route::controller(AdminController::class)->group(function () {
             Route::get('/', 'index')->name('admin.dashboard');
             Route::get('/logout', 'logout')->name('admin.logout');
@@ -160,7 +160,7 @@ Route::group(["prefix" => "dashboard"], function () {
                 "slug" => $slug,
             ]);
         })->name('getSlug');
-    });
+    // });
 
     // Authentication and Authorization Middleware for Admin End
 });

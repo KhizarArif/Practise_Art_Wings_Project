@@ -24,7 +24,7 @@
     <link href="frontend_assets/assets/css/style.css"> -->
 
     @viteReactRefresh
-    <!-- @routes -->
+    @routes
     @vite('resources/js/app.jsx')
     @inertiaHead
 
@@ -44,16 +44,16 @@
 
     <!-- New Design js Start  -->
     <script src="{{ asset('frontend_assets/assets/js/vendor/bootstrap.bundle.min.js') }}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.zoom.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/aos.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/swiper-bundle.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/smoothscroll.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/owl.carousel.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/slick.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery-range-ui.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/vendor/tilt.jquery.min.js')}}"></script>
-    <script src="{{ asset('frontend_assets/assets/js/main.js')}}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.zoom.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/aos.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/swiper-bundle.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/smoothscroll.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/slick.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/jquery-range-ui.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/vendor/tilt.jquery.min.js') }}"></script>
+    <script src="{{ asset('frontend_assets/assets/js/main.js') }}"></script>
 
 
 </body>
