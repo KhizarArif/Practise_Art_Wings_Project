@@ -12,23 +12,30 @@ use Illuminate\Support\Facades\Validator;
 use Intervention\Image\Drivers\Gd\Driver;
 use Intervention\Image\ImageManager;
 use Illuminate\Support\Facades\File;
+use Inertia\Inertia;
 
 class ProductServices
 {
     public function index()
     {
-        $products = Product::with('productImages')->orderBy('id', 'desc')->get();
-        return view('admin.products.index', compact('products'));
+        // $products = Product::with('productImages')->orderBy('id', 'desc')->get();
+        // return view('admin.products.index', compact('products'));
+
+        return Inertia::render("Admin/Products/Index");
     }
 
     public function create()
     {
-        $Categories = Category::orderBy("id", "desc")->where('status', "active")->get();
-        return view('admin.products.create', compact('Categories'));
+        $categories = Category::orderBy("id", "desc")->where('status', "active")->get();
+        // dd($Categories);
+        return Inertia::render("Admin/Products/Create", [
+            'categories' => $categories
+        ]);
     }
 
     public function store($request)
     {
+        dd($request->all());
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'short_description' => 'required',
@@ -42,7 +49,7 @@ class ProductServices
         if ($validator->fails()) {
             $message = $validator->errors();
 
-            return response()->json(['status' => false , 'errors' => $message], 422);
+            return response()->json(['status' => false, 'errors' => $message], 422);
         }
 
         if (!$request->id) {
@@ -50,7 +57,7 @@ class ProductServices
 
             if ($productExists) {
                 $message = 'Product with this name already exists.';
-                return response()->json(['status' => false , 'errors' => $message], 422);
+                return response()->json(['status' => false, 'errors' => $message], 422);
             }
         }
 
@@ -82,29 +89,6 @@ class ProductServices
                     $newImageName = $product->slug . '_' . $productImage->id . '_' . time() . '.' . $ext;
                     $productImage->image = $newImageName;
                     $productImage->save();
-
-                    // For Large Image
-                    try {
-                        $spath = public_path() . '/temp/' . $tempImageInfo->name;
-                        $dpath = public_path() . '/uploads/product/large/' . $newImageName;
-                        $manager = new ImageManager(new Driver());
-                        $image = $manager->read($spath);
-                        $image->resize(1400, 900);
-                        $image->save($dpath);
-                    } catch (\Exception $e) {
-                        dd($e->getMessage());
-                    }
-
-                    // For Small Image
-                    try {
-                        $dpath = public_path() . '/uploads/product/small/' . $newImageName;
-                        $manager = new ImageManager(new Driver());
-                        $image = $manager->read($spath);
-                        $image->resize(300, 300);
-                        $image->save($dpath);
-                    } catch (\Exception $e) {
-                        dd($e->getMessage());
-                    }
                 }
             };
 
@@ -115,161 +99,160 @@ class ProductServices
         }
     }
 
-    public function edit($request)
-    {
-        $editProduct = Product::find($request->id);
-        $productImages = ProductImage::where('product_id', $request->id)->get();
-        $categories = Category::orderBy('id', 'desc')->get();
-        return view('admin.products.edit', compact('editProduct', 'productImages', 'categories'));
-    }
+    // public function edit($request)
+    // {
+    //     $editProduct = Product::find($request->id);
+    //     $productImages = ProductImage::where('product_id', $request->id)->get();
+    //     $categories = Category::orderBy('id', 'desc')->get();
+    //     return view('admin.products.edit', compact('editProduct', 'productImages', 'categories'));
+    // }
 
-    public function updateProductImage($request)
-    {
+    // public function updateProductImage($request)
+    // {
 
-        $image = $request->file;
-        // dd($image);
-        $ext = $image->getClientOriginalExtension();
-        $sourcePath = $image->getPathName();
+    //     $image = $request->file;
+    //     // dd($image);
+    //     $ext = $image->getClientOriginalExtension();
+    //     $sourcePath = $image->getPathName();
 
-        $productImage = new ProductImage();
-        $productImage->product_id = $request->product_id;
-        $productImage->image = "NULL";
-        $productImage->save();
+    //     $productImage = new ProductImage();
+    //     $productImage->product_id = $request->product_id;
+    //     $productImage->image = "NULL";
+    //     $productImage->save();
 
-        $newImageName = $request->slug . '-' . $productImage->id . '-' . time() . '.' . $ext;
-        $productImage->image = $newImageName;
-        $productImage->save();
+    //     $newImageName = $request->slug . '-' . $productImage->id . '-' . time() . '.' . $ext;
+    //     $productImage->image = $newImageName;
+    //     $productImage->save();
 
-        try {
-            $dpath = public_path() . '/uploads/product/large/' . $newImageName;
-            $manager = new ImageManager(new Driver());
-            $image = $manager->read($sourcePath);
-            $image->resize(1400, 900);
-            $image->save($dpath);
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+    //     try {
+    //         $dpath = public_path() . '/uploads/product/large/' . $newImageName;
+    //         $manager = new ImageManager(new Driver());
+    //         $image = $manager->read($sourcePath);
+    //         $image->resize(1400, 900);
+    //         $image->save($dpath);
+    //     } catch (\Exception $e) {
+    //         dd($e->getMessage());
+    //     }
 
-        // For Small Image
-        try {
-            $dpath = public_path() . '/uploads/product/small/' . $newImageName;
-            $manager = new ImageManager(new Driver());
-            $image = $manager->read($sourcePath);
-            $image->resize(300, 300);
-            $image->save($dpath);
-        } catch (\Exception $e) {
-            dd($e->getMessage());
-        }
+    //     // For Small Image
+    //     try {
+    //         $dpath = public_path() . '/uploads/product/small/' . $newImageName;
+    //         $manager = new ImageManager(new Driver());
+    //         $image = $manager->read($sourcePath);
+    //         $image->resize(300, 300);
+    //         $image->save($dpath);
+    //     } catch (\Exception $e) {
+    //         dd($e->getMessage());
+    //     }
 
-        return response()->json([
-            "status" => true,
-            "image_id" => $productImage->id,
-            "ImagePath" => asset('uploads/product/small/' . $productImage->image),
-            "message" => 'Image Saved Successfully!',
-        ]);
-    }
-
-
-    public function deleteProductImage($request)
-    {
-        $productImage = ProductImage::find($request->id);
-        File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
-        File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
-        $productImage->delete();
-
-        return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
-    }
+    //     return response()->json([
+    //         "status" => true,
+    //         "image_id" => $productImage->id,
+    //         "ImagePath" => asset('uploads/product/small/' . $productImage->image),
+    //         "message" => 'Image Saved Successfully!',
+    //     ]);
+    // }
 
 
-    public function destroy($id)
-    {
-        $product = Product::find($id);
+    // public function deleteProductImage($request)
+    // {
+    //     $productImage = ProductImage::find($request->id);
+    //     File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
+    //     File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
+    //     $productImage->delete();
 
-        $productImages = ProductImage::where('product_id', $product->id)->get();
-        if (!empty($productImages)) {
-            foreach ($productImages as $productImage) {
-                File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
-                File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
-            }
-            ProductImage::where('product_id', $product->id)->delete();
-        }
+    //     return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
+    // }
 
-        $product->delete();
+    // public function destroy($id)
+    // {
+    //     $product = Product::find($id);
 
-        return response()->json([
-            "status" => true,
-            "message" => 'Product Deleted Successfully! ',
-        ]);
-    }
+    //     $productImages = ProductImage::where('product_id', $product->id)->get();
+    //     if (!empty($productImages)) {
+    //         foreach ($productImages as $productImage) {
+    //             File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
+    //             File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
+    //         }
+    //         ProductImage::where('product_id', $product->id)->delete();
+    //     }
 
-    public function featuredProduct()
-    {
-        $featured = FeaturedProduct::all();
-        return view('admin.featured.index', compact('featured'));
-    }
+    //     $product->delete();
 
-    public function createFeaturedProduct()
-    {
-        return view('admin.featured.create');
-    }
-    public function storeFeaturedProduct($request)
-    {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'description' => 'required',
-            'price' => 'required',
-            'qty' => 'required',
-            'status' => 'required',
-        ]);
+    //     return response()->json([
+    //         "status" => true,
+    //         "message" => 'Product Deleted Successfully! ',
+    //     ]);
+    // }
 
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()]);
-        }
+    // public function featuredProduct()
+    // {
+    //     $featured = FeaturedProduct::all();
+    //     return view('admin.featured.index', compact('featured'));
+    // }
 
-        if ($validator->passes()) {
-            $featured = $request->id ? FeaturedProduct::find($request->id) : new FeaturedProduct();
-            $featured->name = $request->name;
-            $featured->slug = $request->slug;
-            $featured->description = $request->description;
-            $featured->qty = $request->qty;
-            $featured->price = $request->price;
-            $featured->status = $request->status;
-            $featured->showHome = $request->show_on_home;
-            $featured->save();
+    // public function createFeaturedProduct()
+    // {
+    //     return view('admin.featured.create');
+    // }
+    // public function storeFeaturedProduct($request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'name' => 'required',
+    //         'description' => 'required',
+    //         'price' => 'required',
+    //         'qty' => 'required',
+    //         'status' => 'required',
+    //     ]);
 
-            if (!empty($request->image)) {
-                $tempImageInfo = TempImage::find($request->image);
-                $extArray = explode('.', $tempImageInfo->name);
-                $ext = last($extArray);
-                $newImageName = $request->slug . '-' . $featured->id . '-' . time() . '.' . $ext;
-                $featured->image = $newImageName;
-                $featured->save();
+    //     if ($validator->fails()) {
+    //         return response()->json(['error' => $validator->errors()]);
+    //     }
 
-                // For Large Image
-                try {
-                    $spath = public_path() . '/temp/' . $tempImageInfo->name;
-                    $dpath = public_path() . '/uploads/featured/' . $newImageName;
-                    $manager = new ImageManager(new Driver());
-                    $image = $manager->read($spath);
-                    $image->resize(1400, 900);
-                    $image->save($dpath);
-                } catch (\Exception $e) {
-                    dd($e->getMessage());
-                }
-            }
-            $message = $request->id ? 'Featured Product updated successfully.' : 'Featured Product created successfully.';
-            return response()->json(['status' => true, 'message' => $message]);
-        }
-    }
+    //     if ($validator->passes()) {
+    //         $featured = $request->id ? FeaturedProduct::find($request->id) : new FeaturedProduct();
+    //         $featured->name = $request->name;
+    //         $featured->slug = $request->slug;
+    //         $featured->description = $request->description;
+    //         $featured->qty = $request->qty;
+    //         $featured->price = $request->price;
+    //         $featured->status = $request->status;
+    //         $featured->showHome = $request->show_on_home;
+    //         $featured->save();
 
-    public function editFeaturedProduct($request){
-        $editFeatured = FeaturedProduct::find($request->id);
-        return view('admin.featured.edit', compact('editFeatured'));
-    }
+    //         if (!empty($request->image)) {
+    //             $tempImageInfo = TempImage::find($request->image);
+    //             $extArray = explode('.', $tempImageInfo->name);
+    //             $ext = last($extArray);
+    //             $newImageName = $request->slug . '-' . $featured->id . '-' . time() . '.' . $ext;
+    //             $featured->image = $newImageName;
+    //             $featured->save();
 
-    public function destroyFeaturedProduct($id){
-        $featured = FeaturedProduct::find($id);
-        $featured->delete();
-        return response()->json(['success' => true, 'message' => 'Featured Product deleted successfully']);
-    }
+    //             // For Large Image
+    //             try {
+    //                 $spath = public_path() . '/temp/' . $tempImageInfo->name;
+    //                 $dpath = public_path() . '/uploads/featured/' . $newImageName;
+    //                 $manager = new ImageManager(new Driver());
+    //                 $image = $manager->read($spath);
+    //                 $image->resize(1400, 900);
+    //                 $image->save($dpath);
+    //             } catch (\Exception $e) {
+    //                 dd($e->getMessage());
+    //             }
+    //         }
+    //         $message = $request->id ? 'Featured Product updated successfully.' : 'Featured Product created successfully.';
+    //         return response()->json(['status' => true, 'message' => $message]);
+    //     }
+    // }
+
+    // public function editFeaturedProduct($request){
+    //     $editFeatured = FeaturedProduct::find($request->id);
+    //     return view('admin.featured.edit', compact('editFeatured'));
+    // }
+
+    // public function destroyFeaturedProduct($id){
+    //     $featured = FeaturedProduct::find($id);
+    //     $featured->delete();
+    //     return response()->json(['success' => true, 'message' => 'Featured Product deleted successfully']);
+    // }
 }
