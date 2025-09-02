@@ -18,10 +18,11 @@ class ProductServices
 {
     public function index()
     {
-        // $products = Product::with('productImages')->orderBy('id', 'desc')->get();
-        // return view('admin.products.index', compact('products'));
-
-        return Inertia::render("Admin/Products/Index");
+        $products = Product::with('productImages')->orderBy('id', 'desc')->get();
+        // return view('admin.products.index', compact('products')); 
+        return Inertia::render("Admin/Products/Index", [
+            'products' => $products
+        ]);
     }
 
     public function create()
@@ -35,7 +36,7 @@ class ProductServices
 
     public function store($request)
     {
-        dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'title' => 'required',
             'short_description' => 'required',
@@ -49,7 +50,11 @@ class ProductServices
         if ($validator->fails()) {
             $message = $validator->errors();
 
-            return response()->json(['status' => false, 'errors' => $message], 422);
+            // return response()->json(['status' => false, 'errors' => $message], 422);
+            return redirect()->back()->withErrors([
+                'success' => false,
+                'errors' => $message
+            ]);
         }
 
         if (!$request->id) {
@@ -57,7 +62,11 @@ class ProductServices
 
             if ($productExists) {
                 $message = 'Product with this name already exists.';
-                return response()->json(['status' => false, 'errors' => $message], 422);
+                // return response()->json(['status' => false, 'errors' => $message], 422);
+                return redirect()->back()->withErrors([
+                    'success' => false,
+                    'errors' => $message
+                ]);
             }
         }
 
@@ -74,28 +83,36 @@ class ProductServices
             $product->qty = $request->qty;
             $product->status = $request->status;
             $product->save();
+            if ($request->hasFile('image_array')) {
 
-            if (!$request->id && !empty($request->image_array)) {
-                foreach ($request->image_array as  $temp_value_image) {
-                    $tempImageInfo = TempImage::find($temp_value_image);
-                    $extArray = explode('.', $tempImageInfo->name);
-                    $ext = last($extArray);
+                ProductImage::where('product_id', $product->id)->delete();
 
-                    $productImage = $request->id ? ProductImage::find($request->id) : new ProductImage();
-                    $productImage->product_id = $product->id;
-                    $productImage->image = "NULL";
-                    $productImage->save();
+                foreach ($request->file('image_array') as  $image) {
+                    try {
+                        $productImage = new ProductImage();
+                        $ext = $image->getClientOriginalExtension();
+                        $newImageName = $product->slug . '_' . $productImage->id . '_' . uniqid() . '.' . $ext;
 
-                    $newImageName = $product->slug . '_' . $productImage->id . '_' . time() . '.' . $ext;
-                    $productImage->image = $newImageName;
-                    $productImage->save();
+                        $productImage->image = $newImageName;
+                        $productImage->product_id = $product->id;
+                        $productImage->save();
+
+                        $image->move(public_path() . '/uploads/product', $newImageName);
+                    } catch (\Throwable $th) {
+                        //throw $th;
+                        dd($th);
+                    }
                 }
             };
 
 
             $message = $request->id ? 'Product updated successfully.' : 'Product created successfully.';
 
-            return response()->json(['status' => true, 'message' => $message]);
+            // return response()->json(['status' => true, 'message' => $message]);
+            return redirect()->back()->with([
+                'success' => true,
+                'message' => $message
+            ]);
         }
     }
 
