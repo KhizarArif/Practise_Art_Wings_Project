@@ -4,30 +4,43 @@ import Dropzone from "react-dropzone";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 
-const Create = ({ categories }) => { 
-  
+const Create = ({ categories, editProduct }) => {
+    const [images, setImages] = useState([]);
+
     const { data, setData, post, processing, reset } = useForm({
-        title: "",
-        slug: "",
-        short_description: "",
-        detail_description: "",
-        original_price: "",
-        price: "",
-        qty: "",
-        status: "",
-        category_id: "",
+        // id: editProduct?.id || "",
+        title: editProduct?.title || "",
+        slug: editProduct?.slug || "",
+        short_description: editProduct?.short_description || "",
+        detail_description: editProduct?.detail_description || "",
+        original_price: editProduct?.original_price || "",
+        price: editProduct?.price || "",
+        qty: editProduct?.qty || "",
+        status: editProduct?.status || "",
+        category_id: editProduct?.category_id || "",
         image_array: [],
     });
 
-    const [images, setImages] = useState([]);
+    // Handle Image in case of edit
+    useEffect(() => {
+        if (editProduct?.product_images?.length > 0) {
+            const existingImages = editProduct?.product_images?.map((img) => ({
+                id: img?.id,
+                preview: `/uploads/product/${img?.image}`,
+                isExisting: true,
+            }));
+            setImages(existingImages);
+        }
+    }, [editProduct]);
 
+    // Handle Image when Upload Image from local
     const handleDrop = (acceptedFiles) => {
         // Generate preview URLs
         const previewFiles = acceptedFiles.map((file) =>
             Object.assign(file, { preview: URL.createObjectURL(file) })
         );
         console.log("previewFiles", previewFiles);
-        
+
         // Store in state (for preview)
         setImages((prev) => [...prev, ...previewFiles]);
 
@@ -35,35 +48,77 @@ const Create = ({ categories }) => {
         setData("image_array", [...data?.image_array, ...acceptedFiles]);
     };
 
+    // Feth Slug from title
     const fetchSlug = (title) => {
-      setData("slug", title.replace(/\s+/g, "-").toLowerCase());
-    }
+        setData("slug", title.replace(/\s+/g, "-").toLowerCase());
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
         post(route("product.store"), {
-          forceFormData: true,
-            onSuccess: () => {
-                toast.success("Product added successfully!");
-                reset();
-                setImages([]);
-                router.visit(route("product.index"));
+            forceFormData: true,
+            onSuccess: (response) => {
+                console.log("response from product store", response);
+
+                // toast.success("Product added successfully!");
+                // reset();
+                // setImages([]);
+                // router.visit(route("product.index"));
             },
             onError: (errors) => {
-                Object.values(errors).forEach((msg) => toast.error(msg));
+                toast.error(errors);
+                console.error(errors); 
             },
         });
     };
 
+    // Revoke preview URLs
     useEffect(() => {
-      return () => images.forEach(file => URL.revokeObjectURL(file.preview));
+        return () =>
+            images.forEach((file) => URL.revokeObjectURL(file.preview));
     }, [images]);
-    
+
+    // Delete Product
+    const handleImageDelete = (img) => {
+        if (img?.isExisting) {
+            // Existing image: call API to delete from DB
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This image will be permanently deleted.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.delete(route("products.deleteImage", img?.id), {
+                        onSuccess: () => {
+                            toast.success("Image deleted successfully!");
+                            setImages((prev) =>
+                                prev.filter((image) => image?.id !== img?.id)
+                            );
+                        },
+                        onError: () => {
+                            toast.error("Failed to delete image");
+                        },
+                    });
+                }
+            });
+        } else {
+            // New image (not yet saved): just remove from state
+            setImages((prev) => prev.filter((i) => i !== img));
+            setData(
+                "image_array",
+                data.image_array.filter((file) => file !== img)
+            );
+        }
+    };
 
     return (
         <div className="container">
-            <h4 className="mb-4">Add Product</h4>
+            <h4 className="mb-4"> {editProduct ? "Edit" : "Add"} Product</h4>
 
             <form onSubmit={handleSubmit}>
                 <div className="row">
@@ -186,7 +241,7 @@ const Create = ({ categories }) => {
                                                         className="btn btn-danger btn-sm"
                                                         onClick={() =>
                                                             handleImageDelete(
-                                                                img.id
+                                                                img
                                                             )
                                                         }
                                                     >
@@ -303,7 +358,10 @@ const Create = ({ categories }) => {
                                             Select option...
                                         </option>
                                         {categories?.map((cat) => (
-                                            <option key={cat?.id} value={cat?.id}>
+                                            <option
+                                                key={cat?.id}
+                                                value={cat?.id}
+                                            >
                                                 {cat?.name}
                                             </option>
                                         ))}
@@ -329,6 +387,10 @@ const Create = ({ categories }) => {
                                 ></span>
                                 Saving...
                             </>
+                        ) : // "Submit"
+
+                        editProduct ? (
+                            "Update"
                         ) : (
                             "Submit"
                         )}

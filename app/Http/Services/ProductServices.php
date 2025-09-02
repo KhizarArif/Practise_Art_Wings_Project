@@ -51,7 +51,7 @@ class ProductServices
             $message = $validator->errors();
 
             // return response()->json(['status' => false, 'errors' => $message], 422);
-            return redirect()->back()->withErrors([
+            return redirect()->back()->with([
                 'success' => false,
                 'errors' => $message
             ]);
@@ -61,18 +61,29 @@ class ProductServices
             $productExists = Product::where('title', $request->title)->exists();
 
             if ($productExists) {
-                $message = 'Product with this name already exists.';
-                // return response()->json(['status' => false, 'errors' => $message], 422);
-                return redirect()->back()->withErrors([
+                $message = 'Product with this Name already exists.';
+                // session()->flash('success', false);
+                // session()->flash('errors', $message);
+                return redirect()->back()->with([
                     'success' => false,
                     'errors' => $message
                 ]);
+
+                // return Inertia::render("Admin/Products/Create", [
+                //     'success' => false,
+                //     'errors' => $message
+                // ]);
+
+                // return redirect()->route('product.index');
+                // return redirect()->route('product.index')->with([
+                //     'success' => false,
+                //     'errors' => $message
+                // ]);
             }
         }
 
         if ($validator->passes()) {
-
-            $product = $request->id ? Product::find($request->id) : new Product();
+            $product = $request->id ? Product::where('id', $request->id) : new Product();
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->detail_description = $request->detail_description;
@@ -108,21 +119,30 @@ class ProductServices
 
             $message = $request->id ? 'Product updated successfully.' : 'Product created successfully.';
 
-            // return response()->json(['status' => true, 'message' => $message]);
-            return redirect()->back()->with([
+            // return redirect()->back()->with([
+            //     'success' => true,
+            //     'message' => $message
+            // ]);
+            // dd($message);
+            return redirect()->route('product.index')->with([
                 'success' => true,
                 'message' => $message
             ]);
         }
     }
 
-    // public function edit($request)
-    // {
-    //     $editProduct = Product::find($request->id);
-    //     $productImages = ProductImage::where('product_id', $request->id)->get();
-    //     $categories = Category::orderBy('id', 'desc')->get();
-    //     return view('admin.products.edit', compact('editProduct', 'productImages', 'categories'));
-    // }
+    public function edit($request)
+    {
+        $editProduct = Product::find($request->id);
+        // dd($editProduct);
+        $productImages = $editProduct->productImages;
+        $categories = Category::orderBy('id', 'desc')->get();
+        return Inertia::render("Admin/Products/Create", [
+            'editProduct' => $editProduct,
+            'productImages' => $productImages,
+            'categories' => $categories
+        ]);
+    }
 
     // public function updateProductImage($request)
     // {
