@@ -31,9 +31,9 @@ class ProductController extends Controller
     // public function deleteProductImage(Request $request){
     //     return $this->productServices->deleteProductImage($request);
     // }
-    // public function destroy($id){
-    //     return $this->productServices->destroy($id);
-    // }
+    public function destroy($id){
+        return $this->productServices->destroy($id);
+    }
     // public function featuredProduct(){
     //     return $this->productServices->featuredProduct();
     // }

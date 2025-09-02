@@ -18,11 +18,13 @@ const Index = ({ products }) => {
             if (result.isConfirmed) {
                 router.delete(route("product.delete", productId), {
                     onSuccess: (page) => {
-                        Swal.fire(
-                            "Deleted!",
-                            page.props.flash.success,
-                            "success"
-                        );
+                        if (page.props.flash?.success) {
+                            Swal.fire(
+                                "Deleted!",
+                                page.props.flash?.message || "Product deleted",
+                                "success"
+                            );
+                        }
                     },
                     onError: () => {
                         Swal.fire(
