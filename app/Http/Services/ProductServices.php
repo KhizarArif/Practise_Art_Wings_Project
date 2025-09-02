@@ -64,26 +64,15 @@ class ProductServices
                 $message = 'Product with this Name already exists.';
                 // session()->flash('success', false);
                 // session()->flash('errors', $message);
-                return redirect()->back()->with([
+                return redirect()->back()->withErrors([
                     'success' => false,
                     'errors' => $message
                 ]);
-
-                // return Inertia::render("Admin/Products/Create", [
-                //     'success' => false,
-                //     'errors' => $message
-                // ]);
-
-                // return redirect()->route('product.index');
-                // return redirect()->route('product.index')->with([
-                //     'success' => false,
-                //     'errors' => $message
-                // ]);
             }
         }
 
         if ($validator->passes()) {
-            $product = $request->id ? Product::where('id', $request->id) : new Product();
+            $product = $request->id ? Product::find( $request->id) : new Product();
             $product->title = $request->title;
             $product->slug = $request->slug;
             $product->detail_description = $request->detail_description;
@@ -92,7 +81,7 @@ class ProductServices
             $product->original_price = $request->original_price;
             $product->category_id = $request->category_id;
             $product->qty = $request->qty;
-            $product->status = $request->status;
+            $product->status = $request->status; 
             $product->save();
             if ($request->hasFile('image_array')) {
 
@@ -106,8 +95,7 @@ class ProductServices
 
                         $productImage->image = $newImageName;
                         $productImage->product_id = $product->id;
-                        $productImage->save();
-
+                        $productImage->save(); 
                         $image->move(public_path() . '/uploads/product', $newImageName);
                     } catch (\Throwable $th) {
                         //throw $th;
@@ -119,15 +107,15 @@ class ProductServices
 
             $message = $request->id ? 'Product updated successfully.' : 'Product created successfully.';
 
-            // return redirect()->back()->with([
-            //     'success' => true,
-            //     'message' => $message
-            // ]);
-            // dd($message);
-            return redirect()->route('product.index')->with([
+            return redirect()->back()->with([
                 'success' => true,
                 'message' => $message
             ]);
+            // dd($message);
+            // return redirect()->route('product.index')->with([
+            //     'success' => true,
+            //     'message' => $message
+            // ]);
         }
     }
 
@@ -144,83 +132,38 @@ class ProductServices
         ]);
     }
 
-    // public function updateProductImage($request)
-    // {
+    
+    public function destroy($id)
+    {
+        $product = Product::find($id);
 
-    //     $image = $request->file;
-    //     // dd($image);
-    //     $ext = $image->getClientOriginalExtension();
-    //     $sourcePath = $image->getPathName();
+        if(empty($product)){
+            return redirect()->back()->withErrors([
+                'success' => false,
+                'message' => 'Product not found'
+            ]);
+        }
 
-    //     $productImage = new ProductImage();
-    //     $productImage->product_id = $request->product_id;
-    //     $productImage->image = "NULL";
-    //     $productImage->save();
+        $productImages = ProductImage::where('product_id', $product->id)->get();
+        if (!empty($productImages)) {
+            foreach ($productImages as $productImage) {
+                File::delete(public_path() . '/uploads/product' . $productImage->image);
+            }
+            ProductImage::where('product_id', $product->id)->delete();
+        }
 
-    //     $newImageName = $request->slug . '-' . $productImage->id . '-' . time() . '.' . $ext;
-    //     $productImage->image = $newImageName;
-    //     $productImage->save();
+        $product->delete();
 
-    //     try {
-    //         $dpath = public_path() . '/uploads/product/large/' . $newImageName;
-    //         $manager = new ImageManager(new Driver());
-    //         $image = $manager->read($sourcePath);
-    //         $image->resize(1400, 900);
-    //         $image->save($dpath);
-    //     } catch (\Exception $e) {
-    //         dd($e->getMessage());
-    //     }
+        // return response()->json([
+        //     "status" => true,
+        //     "message" => 'Product Deleted Successfully! ',
+        // ]);
 
-    //     // For Small Image
-    //     try {
-    //         $dpath = public_path() . '/uploads/product/small/' . $newImageName;
-    //         $manager = new ImageManager(new Driver());
-    //         $image = $manager->read($sourcePath);
-    //         $image->resize(300, 300);
-    //         $image->save($dpath);
-    //     } catch (\Exception $e) {
-    //         dd($e->getMessage());
-    //     }
-
-    //     return response()->json([
-    //         "status" => true,
-    //         "image_id" => $productImage->id,
-    //         "ImagePath" => asset('uploads/product/small/' . $productImage->image),
-    //         "message" => 'Image Saved Successfully!',
-    //     ]);
-    // }
-
-
-    // public function deleteProductImage($request)
-    // {
-    //     $productImage = ProductImage::find($request->id);
-    //     File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
-    //     File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
-    //     $productImage->delete();
-
-    //     return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
-    // }
-
-    // public function destroy($id)
-    // {
-    //     $product = Product::find($id);
-
-    //     $productImages = ProductImage::where('product_id', $product->id)->get();
-    //     if (!empty($productImages)) {
-    //         foreach ($productImages as $productImage) {
-    //             File::delete(public_path() . '/uploads/product/large/' . $productImage->image);
-    //             File::delete(public_path() . '/uploads/product/small/' . $productImage->image);
-    //         }
-    //         ProductImage::where('product_id', $product->id)->delete();
-    //     }
-
-    //     $product->delete();
-
-    //     return response()->json([
-    //         "status" => true,
-    //         "message" => 'Product Deleted Successfully! ',
-    //     ]);
-    // }
+        return redirect()->back()->with([
+            'success' => true,
+            'message' => 'Product Deleted Successfully! '
+        ]);
+    }
 
     // public function featuredProduct()
     // {

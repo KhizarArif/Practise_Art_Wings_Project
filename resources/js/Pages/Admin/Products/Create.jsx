@@ -8,7 +8,7 @@ const Create = ({ categories, editProduct }) => {
     const [images, setImages] = useState([]);
 
     const { data, setData, post, processing, reset } = useForm({
-        // id: editProduct?.id || "",
+        id: editProduct?.id || "",
         title: editProduct?.title || "",
         slug: editProduct?.slug || "",
         short_description: editProduct?.short_description || "",
@@ -60,15 +60,20 @@ const Create = ({ categories, editProduct }) => {
             forceFormData: true,
             onSuccess: (response) => {
                 console.log("response from product store", response);
-
+                if(response?.props?.flash?.success) {
+                    toast.success(response?.props?.flash?.message);
+                    reset();
+                    setImages([]);
+                    router.visit(route("product.index"));
+                }
                 // toast.success("Product added successfully!");
                 // reset();
                 // setImages([]);
                 // router.visit(route("product.index"));
             },
-            onError: (errors) => {
-                toast.error(errors);
-                console.error(errors); 
+            onError: (response) => {
+                toast.error(response?.errors);
+                console.error(response); 
             },
         });
     };
