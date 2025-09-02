@@ -21,9 +21,10 @@ class ProductController extends Controller
     public function store(Request $request){
         return $this->productServices->store($request);
     }
-    // public function edit(Request $request){
-    //     return $this->productServices->edit($request);
-    // }
+    public function edit(Request $request){
+        return $this->productServices->edit($request);
+    }
+    
     // public function updateProductImage(Request $request){
     //     return $this->productServices->updateProductImage($request);
     // }

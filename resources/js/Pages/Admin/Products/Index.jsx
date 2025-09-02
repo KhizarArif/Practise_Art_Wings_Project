@@ -2,6 +2,8 @@ import React from "react";
 import { Link, router } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
+import { BiEdit } from "react-icons/bi";
+import { FaDeleteLeft } from "react-icons/fa6";
 
 const Index = ({ products }) => {
     const handleDelete = (productId) => {
@@ -117,12 +119,12 @@ const Index = ({ products }) => {
                                                     <Link
                                                         href={route(
                                                             "product.edit",
-                                                            product.id
+                                                            product?.id
                                                         )}
                                                         className="btn btn-info me-2"
                                                         title="Edit"
                                                     >
-                                                        <i className="fas fa-user-edit"></i>
+                                                        <BiEdit />
                                                     </Link>
 
                                                     <button
@@ -135,7 +137,7 @@ const Index = ({ products }) => {
                                                             )
                                                         }
                                                     >
-                                                        <i className="dripicons-document-delete"></i>
+                                                        <FaDeleteLeft />
                                                     </button>
                                                 </td>
                                             </tr>
