@@ -5,12 +5,14 @@ namespace App\Http\Services;
 use App\Models\Review;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
+use Inertia\Inertia;
 
 class AdminAuthServices
 {
     public function index()
     {
-        return view('admin.auth.login');
+        // return view('admin.auth.login');
+        return Inertia::render("Admin/Auth/Login");
     }
 
     public function authenticate($request)
