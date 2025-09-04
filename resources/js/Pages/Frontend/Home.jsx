@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import FrontendLayout from "../../Layouts/FrontendLayout";
+// import FrontendLayout from "../Layouts/FrontendLayout";
+import FrontendLayout from "./Layouts/FrontendLayout";
 import { Link } from "@inertiajs/react";
 import HeroSwiper from "../../components/HeroSwiper";
 import NewArrivals from "../../components/NewArrivals";

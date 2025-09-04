@@ -354,13 +354,15 @@ body[data-topbar=colored] .app-search span {
     font-weight: 600
 }
 
-.footer {
+.adminFooter {
     bottom: 0;
-    padding: 20px calc(24px / 2);
-    position: absolute;
-    right: 0;
+    /* max-width: fit-content; */
+    width: 100%;
+    padding: 20px ;
+    /* position: absolute; */
+    /* right: 0; */
     color: var(--bs-body-color);
-    left: 240px;
+    /* left: -40px; */
     height: 60px;
     -webkit-box-shadow: 1px 0 20px rgba(0, 0, 0, .05);
     box-shadow: 1px 0 20px rgba(0, 0, 0, .05);
@@ -368,16 +370,16 @@ body[data-topbar=colored] .app-search span {
 }
 
 @media (max-width:992px) {
-    .footer {
+    .adminFooter {
         left: 0
     }
 }
 
-.vertical-collpsed .footer {
+.vertical-collpsed .adminFooter {
     left: 70px
 }
 
-body[data-layout=horizontal] .footer {
+body[data-layout=horizontal] .adminFooter {
     left: 0 !important
 }
 
@@ -907,12 +909,12 @@ body[data-sidebar-size=small] .main-content {
     margin-left: 160px
 }
 
-body[data-sidebar-size=small] .footer {
+body[data-sidebar-size=small] .adminFooter {
     left: 160px
 }
 
 @media (max-width:991px) {
-    body[data-sidebar-size=small] .footer {
+    body[data-sidebar-size=small] .adminFooter {
         left: 0
     }
 }
@@ -945,7 +947,7 @@ body[data-sidebar-size=small].vertical-collpsed .vertical-menu #sidebar-menu>ul>
     display: inline-block
 }
 
-body[data-sidebar-size=small].vertical-collpsed .footer {
+body[data-sidebar-size=small].vertical-collpsed .adminFooter {
     left: 70px
 }
 
@@ -1287,18 +1289,18 @@ body[data-layout-size=boxed] #page-topbar {
     margin: 0 auto
 }
 
-body[data-layout-size=boxed] .footer {
+body[data-layout-size=boxed] .adminFooter {
     margin: 0 auto;
     max-width: calc(1300px - 240px)
 }
 
-body[data-layout-size=boxed].vertical-collpsed .footer {
+body[data-layout-size=boxed].vertical-collpsed .adminFooter {
     max-width: calc(1300px - 70px)
 }
 
 body[data-layout=horizontal][data-layout-size=boxed] #layout-wrapper,
 body[data-layout=horizontal][data-layout-size=boxed] #page-topbar,
-body[data-layout=horizontal][data-layout-size=boxed] .footer {
+body[data-layout=horizontal][data-layout-size=boxed] .adminFooter {
     max-width: 100%
 }
 
@@ -2001,7 +2003,7 @@ body[data-layout=horizontal][data-layout-size=boxed] .navbar-header {
 
 @media print {
 
-    .footer,
+    .adminFooter,
     .navbar-header,
     .page-title-box,
     .right-bar,

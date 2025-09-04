@@ -1,12 +1,15 @@
 import React from "react";
 import { Link, usePage } from "@inertiajs/react";
+import { BsDash } from "react-icons/bs";
+import { RiCheckboxMultipleBlankFill, RiDashboardLine, RiProductHuntFill, RiShoppingBagFill, RiTruckFill } from "react-icons/ri";
 
 const Sidebar = () => {
     const { props } = usePage();
     const user = props.auth?.user || {}; // Assuming you pass auth.user from Laravel
 
     return (
-        <div className="d-flex flex-column bg-light vh-100 p-3">
+        // <div className="d-flex flex-column bg-light vh-100 p-3">
+        <div className="d-flex flex-column flex-shrink-0 p-3 bg-light vh-100 shadow-sm">
             {/* User details */}
             <div className="user-profile text-center mt-3">
                 <div className="mb-2">{/* Add user avatar if needed */}</div>
@@ -31,7 +34,8 @@ const Sidebar = () => {
                             href={route("admin.dashboard")}
                             className="d-flex align-items-center text-decoration-none"
                         >
-                            <i className="ri-dashboard-line me-2"></i>
+                            {/* <i className="ri-dashboard-line me-2"></i>  */}
+                            <RiDashboardLine />
                             <span>Dashboard</span>
                         </Link>
                     </li>
@@ -41,7 +45,8 @@ const Sidebar = () => {
                             href={route("categories.index")}
                             className="d-flex align-items-center text-decoration-none"
                         >
-                            <i className="ri-checkbox-multiple-blank-fill me-2"></i>
+                            {/* <i className="ri-checkbox-multiple-blank-fill me-2"></i> */}
+                            <RiCheckboxMultipleBlankFill />
                             <span>Category</span>
                         </Link>
                     </li>
@@ -51,7 +56,8 @@ const Sidebar = () => {
                             href={route("product.index")}
                             className="d-flex align-items-center text-decoration-none"
                         >
-                            <i className="ri-product-hunt-fill me-2"></i>
+                            {/* <i className="ri-product-hunt-fill me-2"></i> */}
+                            <RiProductHuntFill />
                             <span>Products</span>
                         </Link>
                     </li>
@@ -61,7 +67,8 @@ const Sidebar = () => {
                             href={route("orders.index")}
                             className="d-flex align-items-center text-decoration-none"
                         >
-                            <i className="ri-shopping-bag-fill me-2"></i>
+                            {/* <i className="ri-shopping-bag-fill me-2"></i> */}
+                            <RiShoppingBagFill />
                             <span>Orders</span>
                         </Link>
                     </li>
@@ -71,7 +78,8 @@ const Sidebar = () => {
                             href={route("shipping.create")}
                             className="d-flex align-items-center text-decoration-none"
                         >
-                            <i className="ri-truck-fill me-2"></i>
+                            {/* <i className="ri-truck-fill me-2"></i> */}
+                            <RiTruckFill />
                             <span>Shipping</span>
                         </Link>
                     </li>

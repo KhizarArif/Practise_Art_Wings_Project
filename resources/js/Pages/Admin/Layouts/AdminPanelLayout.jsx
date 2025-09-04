@@ -11,18 +11,17 @@ const AdminPanelLayout = ({ children }) => {
             </div>
             <div className="d-flex flex-grow-1   overflow-hidden">
                 <div
-                    className="col-2  border-end"
-                    style={{
-                        overflowY: "auto",
-                        maxHeight: "calc(100vh - 56px)",
-                    }}   //remove it if not needed
+                    className="col-2  border-end" 
                 >
                     <Sidebar />
                 </div>
                 <div className="col-10">
-                    <div className="d-flex flex-column">
+                    <div className="d-flex flex-column justify-content-between">
                         <main className="flex-grow-1 p-4" style={{ overflowY: "auto" }} >{children}</main>
-                        <Footer />
+                        <div style={{ position: "fixed", bottom: "0", width: "83%"}}>
+                            <Footer />
+                        </div>
+                        {/* <Footer /> */}
                     </div>
                 </div>
             </div>
