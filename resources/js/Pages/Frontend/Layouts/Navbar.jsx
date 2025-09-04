@@ -2,7 +2,7 @@ import { Link } from "@inertiajs/react";
 import React from "react";
 import { FaRegStar } from "react-icons/fa";
 import { FiMenu, FiShoppingCart, FiUser } from "react-icons/fi";
-import BackToTop from "./BackToTop";
+import BackToTop from "../../../Components/BackToTop";
 
 const Navbar = () => {
     return (

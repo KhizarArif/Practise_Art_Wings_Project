@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Frontend  -->
     <link href="/frontend_assets/assets/css/vendor/bootstrap.min.css">
     <link href="/frontend_assets/assets/css/vendor/remixicon.css">
     <link href="/frontend_assets/assets/css/vendor/aos.css">
@@ -12,16 +14,6 @@
     <link href="/frontend_assets/assets/css/vendor/slick.min.css">
     <link href="/frontend_assets/assets/css/vendor/animate.min.css">
     <link href="/frontend_assets/assets/css/vendor/jquery-range-ui.css">
-
-
-    <!-- Style css -->
-    <!-- <link href="/frontend_assets/assets/css/styles.css" />
-    <link href="/frontend_assets/assets/css/payment.css" />
-    <link href="/frontend_assets/assets/css/slider.css" />
-    <link href="/frontend_assets/assets/css/category.css" />
-    <link href="/frontend_assets/assets/css/addToCart.css" />
-    <link href="/frontend_assets/assets/css/footer.css" />
-    <link href="frontend_assets/assets/css/style.css"> -->
 
     @viteReactRefresh
     @routes
@@ -43,6 +35,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <!-- New Design js Start  -->
+    <!-- Frontend JS -->
     <script src="{{ asset('frontend_assets/assets/js/vendor/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.min.js') }}"></script>
     <script src="{{ asset('frontend_assets/assets/js/vendor/jquery.zoom.min.js') }}"></script>
@@ -55,6 +48,10 @@
     <script src="{{ asset('frontend_assets/assets/js/vendor/tilt.jquery.min.js') }}"></script>
     <script src="{{ asset('frontend_assets/assets/js/main.js') }}"></script>
 
+    <!-- Admin js -->
+    <!-- Plugins js -->
+    <script src="{{ asset('admin_assets/assets/js/pages/dashboard.init.js') }}"></script>
+    <script src="{{ asset('admin_assets/assets/js/app.js') }}"></script>
 
 </body>
 
