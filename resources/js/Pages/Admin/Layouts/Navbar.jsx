@@ -12,7 +12,7 @@ const Navbar = () => {
     const { auth } = usePage().props; // Get logged-in user from Laravel props
 
     return (
-        <div className="d-flex justify-content-between align-items-center border-bottom" style={{ maxHeight: "fit-content"}}>
+        <div className="d-flex justify-content-between align-items-center">
             <div className="d-flex">
                 {/* <!-- LOGO --> */}
                 <div className="navbar-brand-box">
