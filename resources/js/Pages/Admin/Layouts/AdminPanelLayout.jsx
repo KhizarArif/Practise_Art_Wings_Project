@@ -5,10 +5,10 @@ import Footer from "./Footer";
 
 const AdminPanelLayout = ({ children }) => {
     return (
-        <div className="d-flex row">
-            <div className="row">
+        <div className="d-flex row" style={{ backgroundColor: "#f2f2f2"}}>
+            {/* <div className="row"> */}
                 <Navbar />
-            </div>
+            {/* </div> */}
             <div className="d-flex flex-grow-1   overflow-hidden">
                 <div
                     className="col-2  border-end" 
