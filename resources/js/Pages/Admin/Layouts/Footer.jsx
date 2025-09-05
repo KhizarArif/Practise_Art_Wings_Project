@@ -2,9 +2,9 @@ import React from 'react'
 
 const Footer = () => {
   return (
-    <footer className="adminFooter">
+    <footer className="adminFooter" style={{ backgroundColor: "#fff"}}>
                 {/* <div className="container-fluid"> */}
-                    <div className="row">
+                    <div className="row" >
                         <div className="col-sm-6">
                             <script>
                                 document.write(new Date().getFullYear())

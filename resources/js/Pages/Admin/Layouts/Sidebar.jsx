@@ -9,7 +9,7 @@ const Sidebar = () => {
 
     return (
         // <div className="d-flex flex-column bg-light vh-100 p-3">
-        <div className="d-flex flex-column flex-shrink-0 p-3 bg-light vh-100 shadow-sm">
+        <div className="d-flex flex-column flex-shrink-0 p-3 vh-100 shadow-sm" style={{ backgroundColor: "#fff" }}>
             {/* User details */}
             <div className="user-profile text-center mt-3">
                 <div className="mb-2">{/* Add user avatar if needed */}</div>

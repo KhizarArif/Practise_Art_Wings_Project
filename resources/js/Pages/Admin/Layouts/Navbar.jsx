@@ -12,7 +12,7 @@ const Navbar = () => {
     const { auth } = usePage().props; // Get logged-in user from Laravel props
 
     return (
-        <div className="d-flex justify-content-between align-items-center">
+        <div className="d-flex justify-content-between align-items-center" style={{ backgroundColor: "#fff" }}>
             <div className="d-flex">
                 {/* <!-- LOGO --> */}
                 <div className="navbar-brand-box">
@@ -58,18 +58,6 @@ const Navbar = () => {
                 >
                     <RiMenu2Line className="align-middle" />
                 </button>
-
-                {/* <!-- App Search--> */}
-                {/* <form className="app-search d-none d-lg-block">
-                    <div className="position-relative">
-                        <RiSearchLine />
-                        <input
-                            type="text"
-                            // className="form-control"
-                            placeholder="Search..."
-                        />
-                    </div>
-                </form> */}
             </div>
 
             <div className="d-flex px-4">
@@ -138,11 +126,7 @@ const Navbar = () => {
                         <MdKeyboardArrowDown className="d-none d-xl-inline-block" />
                     </button>
                     <div className="dropdown-menu dropdown-menu-end">
-                        {/* <!-- item--> */}
-                        <div
-                            className="dropdown-divider"
-                            style={{ marginTop: "-7px" }}
-                        ></div>
+                      
                         <Link
                             className="dropdown-item text-danger"
                             href="{route('admin.logout') }"
