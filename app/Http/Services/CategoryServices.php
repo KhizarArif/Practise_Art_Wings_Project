@@ -18,8 +18,6 @@ class CategoryServices
 
     public function create()
     {
-        // $categories = Category::orderBy('id', 'desc')->get();
-        // return view('admin.category.create', compact('categories'));
         return Inertia::render("Admin/Category/Create");
     }
 
@@ -28,16 +26,15 @@ class CategoryServices
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'status' => 'required',
-            'show_on_home' => 'required',
+            'showHome' => 'required',
         ]);
 
         if ($validator->fails()) {
-            $message = $validator->errors();
+             $errorMessages = implode(', ', $validator->errors()->all());
 
-            // return response()->json(['error' => $message]);
             return redirect()->back()->withErrors([
                 'success' => false,
-                'message' => $message
+                'message' => $errorMessages
             ]);
         }
 
@@ -61,10 +58,9 @@ class CategoryServices
             $category->name = $request->name;
             $category->slug = $request->slug;
             $category->status = $request->status;
-            $category->showHome = $request->show_on_home;
+            $category->showHome = $request->showHome;
             $category->save();
-            $message = $request->id ? 'Category Update successfully' : 'Category created successfully.';
-            // return response()->json(['status' => true, 'message' => $message]);
+            $message = $request->id ? 'Category Update successfully' : 'Category created successfully.'; 
             return redirect()->route('categories.index')->with([
                 'success' => true,
                 'message' => $message
@@ -72,10 +68,10 @@ class CategoryServices
         }
     }
 
-    public function edit($request)
+    public function edit($id)
     {
-        $category = Category::find($request->id);
-        return view('admin.category.create', compact('category'));
+        $category = Category::find($id); 
+        return Inertia::render("Admin/Category/Create", compact('category'));
     }
 
     public function destroy($id)

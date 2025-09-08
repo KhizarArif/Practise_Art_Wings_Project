@@ -1,11 +1,14 @@
 import React from "react";
 import { Inertia } from "@inertiajs/inertia";
-import { Link, usePage } from "@inertiajs/react";
+import { Link, router, usePage } from "@inertiajs/react";
 import Swal from "sweetalert2";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi";
-import { FiDelete } from "react-icons/fi";
-import { BiEdit } from "react-icons/bi";
 import AdminPanelLayout from "../Layouts/AdminPanelLayout";
+import DataTable from "../../../components/Datatable";
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { toast } from "react-toastify";
 
 const Index = () => {
     const { categories } = usePage().props; // Get categories passed from Laravel controller
@@ -46,6 +49,69 @@ const Index = () => {
         });
     };
 
+    const handleEdit = (category) => {
+        if(!category){
+            toast.error("Category not found!");
+        }
+        router.get(route('categories.edit', category?.id));
+    }
+
+    const columns = [
+        {
+            field: "id",
+            headerName: "ID",
+            width: 70,
+            headerAlign: "center",
+            align: "center",
+        },
+        {
+            field: "name",
+            headerName: "Category Name",
+            width: 280,
+            headerAlign: "center",
+            align: "center",
+        },
+        {
+            field: "status",
+            headerName: "Status",
+            width: 180,
+            headerAlign: "center",
+            align: "center",
+            renderCell: (params) =>
+                params.value === "active" ? (
+                    <HiCheckCircle size={24} className="text-success" />
+                ) : (
+                    <HiXCircle size={24} className="text-danger" />
+                ),
+        },
+        {
+            field: "Action",
+            headerName: "Action",
+            width: 180,
+            headerAlign: "center",
+            align: "center",
+            sortable: false,
+            renderCell: (params) => (
+                <div style={{ display: "flex", gap: "8px" }}>
+                    <IconButton
+                        color="primary"
+                        size="small"
+                        onClick={() => handleEdit(params.row)}
+                    >
+                        <EditIcon />
+                    </IconButton>
+                    <IconButton
+                        color="error"
+                        size="small"
+                        onClick={() => deleteItem(params.row.id)}
+                    >
+                        <DeleteIcon />
+                    </IconButton>
+                </div>
+            ),
+        },
+    ];
+
     return (
         <AdminPanelLayout>
             <div className="row">
@@ -73,7 +139,8 @@ const Index = () => {
                             </div>
 
                             {/* Table */}
-                            <table
+                            <DataTable columns={columns} rows={categories} />
+                            {/* <table
                                 className="table table-striped table-bordered dt-responsive nowrap"
                                 style={{
                                     borderCollapse: "collapse",
@@ -148,7 +215,7 @@ const Index = () => {
                                         </tr>
                                     )}
                                 </tbody>
-                            </table>
+                            </table> */}
                         </div>
                     </div>
                 </div>

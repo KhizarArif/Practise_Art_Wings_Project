@@ -26,9 +26,9 @@ class CategoryController extends Controller
     {
         return $this->categoryServices->store($request);
     }
-    public function edit(Request $request)
+    public function edit($id)
     {
-        return $this->categoryServices->edit($request);
+        return $this->categoryServices->edit($id);
     }
     public function destroy($id)
     {
