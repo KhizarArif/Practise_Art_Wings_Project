@@ -128,8 +128,8 @@ const Index = () => {
                                         <Link href={route("categories.create")}>
                                             <button
                                                 type="button"
-                                                className="btn btn-outline-info waves-effect waves-light float-end"
-                                                onClick={addCategoryPage}
+                                                className="custom_button"
+                                                onClick={addCategoryPage} 
                                             >
                                                 Add Category
                                             </button>

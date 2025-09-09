@@ -125,12 +125,11 @@ const Create = ({ categories, editProduct }) => {
     return (
         <AdminPanelLayout>
             <div className="container">
-                <h4 className="mb-4">
-                    {" "}
+                <h4 className="mb-4"> 
                     {editProduct ? "Edit" : "Add"} Product
                 </h4>
 
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className="mb-6">
                     <div className="row">
                         {/* Left Column */}
                         <div className="col-md-8">
@@ -336,10 +335,9 @@ const Create = ({ categories, editProduct }) => {
                             <div className="card">
                                 <div className="card-body">
                                     {/* Status */}
-                                    <h5>Product Status</h5>
                                     <div className="mb-3">
                                         <label className="form-label">
-                                            Status
+                                            Product Status
                                         </label>
                                         <select
                                             className="form-select"
@@ -365,7 +363,9 @@ const Create = ({ categories, editProduct }) => {
                                     </div>
 
                                     {/* Category */}
-                                    <h5>Product Category</h5>
+                                    <label className="form-label">
+                                        Product Category
+                                    </label>
                                     <div className="mb-3">
                                         <select
                                             className="form-select"
@@ -394,31 +394,30 @@ const Create = ({ categories, editProduct }) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        {/* Submit Button */}
+                        <div className="mb-6">
+                            <button
+                                className="btn btn-primary"
+                                type="submit"
+                                // disabled={processing}
+                            >
+                                {processing ? (
+                                    <>
+                                        <span
+                                            className="spinner-border spinner-border-sm me-2"
+                                            role="status"
+                                        ></span>
+                                        Saving...
+                                    </>
+                                ) : // "Submit"
 
-                    {/* Submit Button */}
-                    <div className="mt-3">
-                        <button
-                            className="btn btn-primary"
-                            type="submit"
-                            // disabled={processing}
-                        >
-                            {processing ? (
-                                <>
-                                    <span
-                                        className="spinner-border spinner-border-sm me-2"
-                                        role="status"
-                                    ></span>
-                                    Saving...
-                                </>
-                            ) : // "Submit"
-
-                            editProduct ? (
-                                "Update"
-                            ) : (
-                                "Submit"
-                            )}
-                        </button>
+                                editProduct ? (
+                                    "Update"
+                                ) : (
+                                    "Submit"
+                                )}
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>

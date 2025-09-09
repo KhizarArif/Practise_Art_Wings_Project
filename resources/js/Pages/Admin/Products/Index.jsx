@@ -55,7 +55,7 @@ const Index = ({ products }) => {
                                     <div className="button-items">
                                         <Link
                                             href={route("product.create")}
-                                            className="btn btn-outline-info waves-effect waves-light float-end"
+                                            className="custom_button"
                                         >
                                             Add Product
                                         </Link>
