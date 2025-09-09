@@ -33,7 +33,7 @@ const Sidebar = () => {
                 />
             ),
             link: route("categories.index"),
-            tagName: "category",
+            tagName: "categories",
         },
         {
             id: 3,
@@ -67,7 +67,8 @@ const Sidebar = () => {
     ];
 
     const currentUrl = url.toLowerCase();
-
+    const pathSegments = currentUrl.split("/").filter(Boolean); // remove empty strings
+    const secondSegment = pathSegments[1] || "dashboard";
 
     return (
         // <div className="d-flex flex-column bg-light vh-100 p-3">
@@ -94,11 +95,10 @@ const Sidebar = () => {
             <div id="sidebar-menu">
                 <ul className="list-unstyled">
                     {SidebarMenu?.map((item) => {
-                        // const isActive = url.startsWith(item?.title);
-                        const isActive = currentUrl.includes(item?.tagName);
-                        console.log("tag Name", item?.tagName);
-                        console.log("current url", currentUrl);
-                        
+                        const isActive =
+                            item?.tagName.toLowerCase() ===
+                            secondSegment.toLowerCase();
+
                         return (
                             <li key={item?.id}>
                                 <Link
