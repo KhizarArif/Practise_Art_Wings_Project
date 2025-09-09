@@ -16,39 +16,25 @@ const Navbar = () => {
             <div className="d-flex">
                 {/* <!-- LOGO --> */}
                 <div className="navbar-brand-box">
-                    <a
+                    {/* <Link
                         href="{ route('admin.dashboard') }"
                         className="logo logo-dark"
-                    >
-                        <span className="logo-sm">
-                            <h2> Art Wings </h2>
-                            <img
-                                src="/admin_assets/assets/images/logo-sm.png"
+                    > 
+                        <span className="logo-lg">
+                            <span> Art Wings </span>
+                             <img
+                                src="/admin_assets/assets/images/logo.jpg"
                                 alt="logo-sm-light"
                                 height="22"
                             />
                         </span>
-                        {/* <span className="logo-lg">
-                            <h1> Art Wings </h1>
-                            <img
-                                src="{{ asset('admin_assets/assets/images/logo-sm.png') }}"
-                                alt="logo-sm-light"
-                                height="22"
-                            />
-                        </span> */}
-                    </a>
+                    </Link> */}
 
-                    <a
-                        href="{ route('admin.dashboard') }"
-                        className="logo logo-light"
-                    >
-                        <span className="logo-sm">
-                            <p> Art Wings </p>
-                        </span>
-                        {/* <span className="logo-lg">
-                            <p> Art Wings </p>
-                        </span> */}
-                    </a>
+                    <Link className="navbar_logo_container">
+                        {/* <img src="/admin_assets/assets/images/logo.jpg" alt="Art Wings Logo" className="navbar_logo"/> */}
+                        <img src="/admin_assets/assets/images/logo-light.png" alt="Art Wings Logo" className="navbar_logo"/>
+                    </Link>
+                  
                 </div>
 
                 <button
@@ -70,7 +56,7 @@ const Navbar = () => {
                         aria-haspopup="true"
                         aria-expanded="false"
                     >
-                        <i className="ri-search-line"></i>
+                      <RiSearchLine size={20} className="text-gray-600" />
                     </button>
                     <div
                         className="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
