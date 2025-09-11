@@ -1,6 +1,18 @@
+import { Link } from "@inertiajs/react";
 import React from "react";
+import {
+  RiHeartLine,
+  RiEyeLine,
+  RiRepeatLine,
+  RiShoppingBag4Line,
+  RiStarFill,
+  RiStarLine
+} from "react-icons/ri";
 
-const NewArrivals = ({ products }) => {
+
+const NewArrivals = ({ newArrivals }) => {
+    console.log("newArrivals", newArrivals);
+    
     return (
         <section className="section-deal padding-tb-50">
             <div className="container">
@@ -30,14 +42,14 @@ const NewArrivals = ({ products }) => {
                     <div className="col-12">
                         <div className="bb-deal-slider">
                             <div className="bb-deal-block owl-carousel">
-                                {products && products.length > 0 ? (
-                                    products.map((product) => (
+                                {newArrivals && newArrivals.length > 0 ? (
+                                    newArrivals?.map((product) => (
                                         <div
                                             className="bb-deal-card"
                                             data-aos="fade-up"
                                             data-aos-duration="1000"
                                             data-aos-delay="200"
-                                            key={product.id}
+                                            key={product?.id}
                                         >
                                             <div className="bb-pro-box">
                                                 {/* Product Image */}
@@ -45,42 +57,42 @@ const NewArrivals = ({ products }) => {
                                                     <span className="flags">
                                                         <span>New</span>
                                                     </span>
-                                                    <a href="javascript:void(0)">
-                                                        {product.productImages &&
+                                                    <Link href="javascript:void(0)">
+                                                        {product?.new_arrival_images &&
                                                             product
-                                                                .productImages
+                                                                ?.new_arrival_images
                                                                 .length > 0 && (
                                                                 <div className="inner-img">
                                                                     <img
                                                                         className="main-img"
-                                                                        src={`/uploads/product/large/${product.productImages[0].image}`}
+                                                                        src={`/uploads/NewArrival/${product?.new_arrival_images[0].image}`}
                                                                         alt={
-                                                                            product.title
+                                                                            product?.title
                                                                         }
                                                                     />
                                                                     {product
-                                                                        .productImages[1] && (
+                                                                        ?.new_arrival_images[1] && (
                                                                         <img
                                                                             className="hover-img"
-                                                                            src={`/uploads/product/large/${product.productImages[1].image}`}
+                                                                            src={`/uploads/NewArrival/${product?.new_arrival_images[1].image}`}
                                                                             alt={
-                                                                                product.title
+                                                                                product?.title
                                                                             }
                                                                         />
                                                                     )}
                                                                 </div>
                                                             )}
-                                                    </a>
+                                                    </Link>
 
                                                     {/* Action Buttons */}
                                                     <ul className="bb-pro-actions">
                                                         <li className="bb-btn-group">
-                                                            <a
+                                                            <Link
                                                                 href="javascript:void(0)"
                                                                 title="Wishlist"
                                                             >
-                                                                <i className="ri-heart-line"></i>
-                                                            </a>
+                                                              <RiHeartLine />
+                                                            </Link>
                                                         </li>
                                                         <li className="bb-btn-group">
                                                             <a
@@ -91,40 +103,40 @@ const NewArrivals = ({ products }) => {
                                                                 data-bs-toggle="modal"
                                                                 data-bs-target="#bry_quickview_modal"
                                                                 data-id={
-                                                                    product.id
+                                                                    product?.id
                                                                 }
                                                                 data-title={
-                                                                    product.title
+                                                                    product?.title
                                                                 }
                                                                 data-description={
-                                                                    product.detail_description
+                                                                    product?.detail_description
                                                                 }
                                                                 data-image={
                                                                     product
-                                                                        .productImages
+                                                                        .new_arrival_images
                                                                         .length >
                                                                     0
-                                                                        ? `/uploads/product/large/${product.productImages[0].image}`
+                                                                        ? `/uploads/NewArrival/${product.new_arrival_images[0].image}`
                                                                         : "/frontend_assets/assets/img/product/default.jpg"
                                                                 }
                                                                 data-image-id={
                                                                     product
-                                                                        .productImages
+                                                                        ?.new_arrival_images
                                                                         .length >
                                                                     0
                                                                         ? product
-                                                                              .productImages[0]
+                                                                              ?.new_arrival_images[0]
                                                                               .id
                                                                         : ""
                                                                 }
                                                                 data-price={
-                                                                    product.price
+                                                                    product?.price
                                                                 }
                                                                 data-old-price={
-                                                                    product.original_price
+                                                                    product?.original_price
                                                                 }
                                                             >
-                                                                <i className="ri-eye-line"></i>
+                                                                <RiEyeLine />
                                                             </a>
                                                         </li>
                                                         <li className="bb-btn-group">
@@ -132,7 +144,7 @@ const NewArrivals = ({ products }) => {
                                                                 href="compare.html"
                                                                 title="Compare"
                                                             >
-                                                                <i className="ri-repeat-line"></i>
+                                                              <RiRepeatLine />
                                                             </a>
                                                         </li>
                                                         <li className="bb-btn-group">
@@ -140,7 +152,7 @@ const NewArrivals = ({ products }) => {
                                                                 href="javascript:void(0)"
                                                                 title="Add To Cart"
                                                             >
-                                                                <i className="ri-shopping-bag-4-line"></i>
+                                                               <RiShoppingBag4Line />
                                                             </a>
                                                         </li>
                                                     </ul>
@@ -151,22 +163,22 @@ const NewArrivals = ({ products }) => {
                                                     <div className="bb-pro-subtitle">
                                                         <a href="shop-left-sidebar-col-3.html">
                                                             {
-                                                                product.category
+                                                                product?.category
                                                                     ?.name
                                                             }
                                                         </a>
                                                         <span className="bb-pro-rating">
-                                                            <i className="ri-star-fill"></i>
-                                                            <i className="ri-star-fill"></i>
-                                                            <i className="ri-star-fill"></i>
-                                                            <i className="ri-star-fill"></i>
-                                                            <i className="ri-star-line"></i>
+                                                            <RiStarFill />
+                                                           <RiStarFill />
+                                                            <RiStarFill />
+                                                            <RiStarFill />
+                                                           <RiStarLine />
                                                         </span>
                                                     </div>
 
                                                     <h4 className="bb-pro-title">
                                                         <a href="product-left-sidebar.html">
-                                                            {product.title}
+                                                            {product?.title}
                                                         </a>
                                                     </h4>
 
@@ -174,17 +186,17 @@ const NewArrivals = ({ products }) => {
                                                         <div className="inner-price">
                                                             <span className="new-price">
                                                                 Rs.{" "}
-                                                                {product.price}
+                                                                {product?.price}
                                                             </span>
                                                             <span className="old-price">
                                                                 Rs.{" "}
                                                                 {
-                                                                    product.original_price
+                                                                    product?.original_price
                                                                 }
                                                             </span>
                                                         </div>
                                                         <span className="last-items">
-                                                            {product.qty} Pack
+                                                            {product?.qty} Pack
                                                         </span>
                                                     </div>
                                                 </div>

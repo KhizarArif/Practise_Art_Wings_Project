@@ -7066,6 +7066,11 @@ button.btn-close.qty_close {
   margin: -12px;
 }
 
+.bb-deal-block{
+  display: flex;
+  
+}
+
 .bb-deal-slider .bb-deal-card,
 .bb-deal-slider .bb-deal-card-2 {
   padding: 12px;

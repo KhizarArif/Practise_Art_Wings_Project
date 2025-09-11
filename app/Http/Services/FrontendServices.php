@@ -29,9 +29,8 @@ class FrontendServices
         $products = Product::with('productImages', 'category')
             ->where('status', 'active')
             ->orderBy('id', 'desc')->get();
-        // $contentCart = Cart::content();
-        // return view('frontend.welcome', compact('products', 'contentCart'));
-        return Inertia::render('Frontend/Home', compact('products'));
+        $newArrivals = NewArrival::with('newArrivalImages')->where('status', 'active')->orderBy('id', 'desc')->get();
+        return Inertia::render('Frontend/Home', compact('products', 'newArrivals'));
     }
 
     // public function cart()
