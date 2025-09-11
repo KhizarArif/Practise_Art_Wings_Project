@@ -125,6 +125,19 @@ Route::group(["prefix" => "dashboard"], function () {
             });
         });
 
+        // New Arrival Routes
+        Route::controller(NewArrivalController::class)->prefix('new_arrivals')->group(function () {
+            Route::get('', 'index')->name('new_arrival.index');
+            Route::get('create', 'create')->name('new_arrival.create');
+            Route::get('edit/{id}', 'edit')->name('new_arrival.edit');
+            Route::post('store', 'store')->name('new_arrival.store');
+            Route::delete('delete/{id}', 'destroy')->name('new_arrival.delete');
+
+            // Update Product Controller Image
+            Route::post('product_image/update', 'updateProductImage')->name('products.updateImage');
+            Route::delete('product_image', 'deleteProductImage')->name('products.deleteImage');
+        });
+
         // Order Details
         Route::controller(OrderController::class)->prefix('orders')->group(function () {
             Route::get('', 'index')->name('orders.index');

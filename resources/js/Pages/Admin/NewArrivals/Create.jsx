@@ -1,0 +1,434 @@
+import React, { useEffect, useState } from "react";
+import { useForm, router } from "@inertiajs/react";
+import Dropzone from "react-dropzone";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import AdminPanelLayout from "../Layouts/AdminPanelLayout";
+
+const Create = ({ categories, editProduct }) => {
+    const [images, setImages] = useState([]);
+
+    const { data, setData, post, processing, reset } = useForm({
+        id: editProduct?.id || "",
+        title: editProduct?.title || "",
+        slug: editProduct?.slug || "",
+        short_description: editProduct?.short_description || "",
+        detail_description: editProduct?.detail_description || "",
+        original_price: editProduct?.original_price || "",
+        price: editProduct?.price || "",
+        qty: editProduct?.qty || "",
+        status: editProduct?.status || "",
+        category_id: editProduct?.category_id || "",
+        image_array: [],
+    });
+
+    // Handle Image in case of edit
+    useEffect(() => {
+        if (editProduct?.product_images?.length > 0) {
+            const existingImages = editProduct?.product_images?.map((img) => ({
+                id: img?.id,
+                preview: `/uploads/product/${img?.image}`,
+                isExisting: true,
+            }));
+            setImages(existingImages);
+        }
+    }, [editProduct]);
+
+    // Handle Image when Upload Image from local
+    const handleDrop = (acceptedFiles) => {
+        // Generate preview URLs
+        const previewFiles = acceptedFiles.map((file) =>
+            Object.assign(file, { preview: URL.createObjectURL(file) })
+        );
+        console.log("previewFiles", previewFiles);
+
+        // Store in state (for preview)
+        setImages((prev) => [...prev, ...previewFiles]);
+
+        // Store in useForm (for submission)
+        setData("image_array", [...data?.image_array, ...acceptedFiles]);
+    };
+
+    // Feth Slug from title
+    const fetchSlug = (title) => {
+        setData("slug", title.replace(/\s+/g, "-").toLowerCase());
+    };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
+        post(route("new_arrival.store"), {
+            forceFormData: true,
+            onSuccess: (response) => {
+                console.log("response from new_arrivals store", response);
+                if (response?.props?.flash?.success) {
+                    toast.success(response?.props?.flash?.message);
+                    reset();
+                    setImages([]);
+                    router.visit(route("new_arrival.index"));
+                }
+                // toast.success("Product added successfully!");
+                // reset();
+                // setImages([]);
+                // router.visit(route("product.index"));
+            },
+            onError: (response) => {
+                toast.error(response?.errors);
+                console.error(response);
+            },
+        });
+    };
+
+    // Revoke preview URLs
+    useEffect(() => {
+        return () =>
+            images.forEach((file) => URL.revokeObjectURL(file.preview));
+    }, [images]);
+
+    // Delete Product
+    const handleImageDelete = (img) => {
+        if (img?.isExisting) {
+            // Existing image: call API to delete from DB
+            Swal.fire({
+                title: "Are you sure?",
+                text: "This image will be permanently deleted.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, delete it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    router.delete(route("new_arrival.deleteImage", img?.id), {
+                        onSuccess: () => {
+                            toast.success("Image deleted successfully!");
+                            setImages((prev) =>
+                                prev.filter((image) => image?.id !== img?.id)
+                            );
+                        },
+                        onError: () => {
+                            toast.error("Failed to delete image");
+                        },
+                    });
+                }
+            });
+        } else {
+            // New image (not yet saved): just remove from state
+            setImages((prev) => prev.filter((i) => i !== img));
+            setData(
+                "image_array",
+                data.image_array.filter((file) => file !== img)
+            );
+        }
+    };
+
+    return (
+        <AdminPanelLayout>
+            <div className="card p-4 mb-4">
+                <h4 className="mb-4"> 
+                    {editProduct ? "Edit" : "Add"} New Arrival
+                </h4>
+
+                <form onSubmit={handleSubmit} className="mb-6">
+                    <div className="row">
+                        {/* Left Column */}
+                        <div className="col-md-8">
+                            <div className="card mb-3">
+                                <div className="card-body">
+                                    {/* Title */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={data?.title}
+                                            placeholder="Enter title"
+                                            onChange={(e) => {
+                                                setData(
+                                                    "title",
+                                                    e.target.value
+                                                );
+                                                fetchSlug(e.target.value);
+                                            }}
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Slug */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Slug
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            value={data?.slug}
+                                            readOnly
+                                        />
+                                    </div>
+
+                                    {/* Short Description */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Short Description
+                                        </label>
+                                        <input
+                                            type="text"
+                                            className="form-control"
+                                            placeholder="Enter short description"
+                                            value={data?.short_description}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "short_description",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Detail Description */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Detail Description
+                                        </label>
+                                        <textarea
+                                            className="form-control"
+                                            rows="5"
+                                            value={data?.detail_description}
+                                            placeholder="Enter detail description"
+                                            onChange={(e) =>
+                                                setData(
+                                                    "detail_description",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Dropzone */}
+                                    <div className="card mb-3">
+                                        <div className="card-body">
+                                            <h5 className="mb-3">Media</h5>
+                                            <Dropzone
+                                                onDrop={handleDrop}
+                                                accept={{ "image/*": [] }}
+                                            >
+                                                {({
+                                                    getRootProps,
+                                                    getInputProps,
+                                                }) => (
+                                                    <div
+                                                        {...getRootProps()}
+                                                        className="border p-4 text-center bg-light rounded"
+                                                        style={{
+                                                            cursor: "pointer",
+                                                        }}
+                                                    >
+                                                        <input
+                                                            {...getInputProps()}
+                                                        />
+                                                        <p className="mb-0">
+                                                            Drop files here or
+                                                            click to upload.
+                                                        </p>
+                                                    </div>
+                                                )}
+                                            </Dropzone>
+                                        </div>
+                                    </div>
+
+                                    {/* Gallery */}
+                                    <div className="row">
+                                        {images?.map((img, index) => (
+                                            <div
+                                                className="col-md-2 mb-3"
+                                                key={index}
+                                            >
+                                                <div className="card">
+                                                    <img
+                                                        src={img.preview}
+                                                        className="card-img-top"
+                                                        alt="Product"
+                                                    />
+                                                    <div className="card-body text-center">
+                                                        <button
+                                                            type="button"
+                                                            className="btn btn-danger btn-sm"
+                                                            onClick={() =>
+                                                                handleImageDelete(
+                                                                    img
+                                                                )
+                                                            }
+                                                        >
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Price + Original Price */}
+                                    <div className="row">
+                                        <div className="col-md-6">
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Original Price
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    placeholder="Enter original price"
+                                                    value={data.original_price}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "original_price",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="col-md-6">
+                                            <div className="mb-3">
+                                                <label className="form-label">
+                                                    Price
+                                                </label>
+                                                <input
+                                                    type="number"
+                                                    className="form-control"
+                                                    placeholder="Enter price"
+                                                    value={data.price}
+                                                    onChange={(e) =>
+                                                        setData(
+                                                            "price",
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Quantity */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Quantity
+                                        </label>
+                                        <input
+                                            type="number"
+                                            className="form-control"
+                                            placeholder="Enter quantity"
+                                            value={data.qty}
+                                            onChange={(e) =>
+                                                setData("qty", e.target.value)
+                                            }
+                                            required
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="col-md-4">
+                            <div className="card">
+                                <div className="card-body">
+                                    {/* Status */}
+                                    <div className="mb-3">
+                                        <label className="form-label">
+                                            Product Status
+                                        </label>
+                                        <select
+                                            className="form-select"
+                                            value={data.status}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "status",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        >
+                                            <option value="">
+                                                Select option...
+                                            </option>
+                                            <option value="active">
+                                                Active
+                                            </option>
+                                            <option value="inactive">
+                                                Inactive
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    {/* Category */}
+                                    <label className="form-label">
+                                        Product Category
+                                    </label>
+                                    <div className="mb-3">
+                                        <select
+                                            className="form-select"
+                                            value={data.category_id}
+                                            onChange={(e) =>
+                                                setData(
+                                                    "category_id",
+                                                    e.target.value
+                                                )
+                                            }
+                                            required
+                                        >
+                                            <option value="">
+                                                Select option...
+                                            </option>
+                                            {categories?.map((cat) => (
+                                                <option
+                                                    key={cat?.id}
+                                                    value={cat?.id}
+                                                >
+                                                    {cat?.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {/* Submit Button */}
+                        <div className="mb-6">
+                            <button
+                                className="btn btn-primary"
+                                type="submit"
+                                // disabled={processing}
+                            >
+                                {processing ? (
+                                    <>
+                                        <span
+                                            className="spinner-border spinner-border-sm me-2"
+                                            role="status"
+                                        ></span>
+                                        Saving...
+                                    </>
+                                ) : // "Submit"
+
+                                editProduct ? (
+                                    "Update"
+                                ) : (
+                                    "Submit"
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </AdminPanelLayout>
+    );
+};
+
+export default Create;

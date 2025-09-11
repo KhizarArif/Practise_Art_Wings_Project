@@ -7,7 +7,7 @@ import NewArrivals from "../../components/NewArrivals";
 import Banners from "../../components/Banners";
 import Services from "../../components/Services";
 
-const Home = () => {
+const Home = ({newArrivals}) => {
     return (
         <FrontendLayout>
             <section className="section-hero margin-b-50 next">
@@ -15,7 +15,7 @@ const Home = () => {
                     <HeroSwiper />
                 </div>
             </section>
-            <NewArrivals />
+            <NewArrivals newArrivals={newArrivals} />
             <Banners />
             <Services />
         </FrontendLayout>

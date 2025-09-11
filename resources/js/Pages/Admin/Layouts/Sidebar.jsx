@@ -48,6 +48,17 @@ const Sidebar = () => {
         },
         {
             id: 4,
+            title: "New Arrivals",
+            icon: (
+                <RiProductHuntFill
+                    style={{ fontSize: "24px", color: "black" }}
+                />
+            ),
+            link: route("new_arrival.index"),
+            tagName: "new_arrivals",
+        },
+        {
+            id: 5,
             title: "Orders",
             icon: (
                 <RiShoppingBagFill
@@ -58,7 +69,7 @@ const Sidebar = () => {
             tagName: "orders",
         },
         {
-            id: 5,
+            id: 6,
             title: "Shipping",
             icon: <RiTruckFill style={{ fontSize: "24px", color: "black" }} />,
             link: route("shipping.create"),
